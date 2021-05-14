@@ -5,16 +5,25 @@ set -euo pipefail
 # shellcheck source=../lib/utils.bash
 source "$(dirname "$0")/../lib/utils.bash"
 
-mkdir -p "$ASDF_DOWNLOAD_PATH"
+mkdir -p "${ASDF_DOWNLOAD_PATH}/bin"
 
-# TODO: Adapt this to proper extension and adapt extracting strategy.
-release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.tar.gz"
+ARCH=$(uname -m)
+case $ARCH in
+  i386 | i686) ARCH=x86 ;;
+  armv6*) ARCH=armv6 ;;
+  armv7*) ARCH=armv7 ;;
+  aarch64*) ARCH=arm64 ;;
+esac
+
+archive_name="${TOOL_NAME}_${ASDF_INSTALL_VERSION}_$(uname -s)_${ARCH}.tar.gz"
+
+release_file="${ASDF_DOWNLOAD_PATH}/${archive_name}"
 
 # Download tar.gz file to the download directory
-download_release "$ASDF_INSTALL_VERSION" "$release_file"
+download_release "${ASDF_INSTALL_VERSION}" "${release_file}" "${archive_name}"
 
 #  Extract contents of tar.gz file into the download directory
-tar -xzf "$release_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1 || fail "Could not extract $release_file"
+(cd "${ASDF_DOWNLOAD_PATH}/bin" && tar -xzf "${release_file}") || fail "Could not extract ${release_file}"
 
 # Remove the tar.gz file since we don't need to keep it
-rm "$release_file"
+rm "${release_file}"
