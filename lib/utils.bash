@@ -5,7 +5,7 @@ set -euo pipefail
 GH_REPO="https://github.com/jesseduffield/lazydocker"
 TOOL_NAME="lazydocker"
 TOOL_TEST="lazydocker --version"
-ASDF_DOWNLOAD_PATH="/tmp/${TOOL_NAME}_${ASDF_INSTALL_VERSION}"
+ASDF_DOWNLOAD_PATH="/tmp/${TOOL_NAME}"
 
 fail() {
   echo -e "asdf-$TOOL_NAME: $*"
